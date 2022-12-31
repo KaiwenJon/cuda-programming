@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 
   //@@ Initialize the grid and block dimensions here
   int NUM_THREADS = 64;
-  int NUM_BLOCKS = (int)ceil(inputLength / NUM_THREADS);
+  int NUM_BLOCKS = (int)ceil(inputLength / (float)NUM_THREADS);
   wbTime_start(Compute, "Performing CUDA computation");
   //@@ Launch the GPU Kernel here
   vecAdd<<<NUM_BLOCKS, NUM_THREADS>>>(deviceInput1, deviceInput2, deviceOutput, inputLength);
