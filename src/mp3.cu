@@ -31,33 +31,52 @@ __global__ void matrixMultiply(float *A, float *B, float *C, int numARows,
   int tx = threadIdx.x;
   int ROW = blockIdx.y * blockDim.y + threadIdx.y;
   int COL = blockIdx.x * blockDim.x + threadIdx.x;
-  if(ROW >= numCRows || COL >= numCColumns){
-    return;
-  }
+  // if(ROW >= numCRows || COL >= numCColumns){
+  //   return;
+  // }
   float p_value = 0;
   // Loop over tile across k(numAColumns)
   int n_TILE = (int)ceil(numAColumns / (float)TILE_WIDTH);
   for(int t=0; t<n_TILE; t++){
-    TILE_A[ty][tx] = A[ROW * numAColumns + t*TILE_WIDTH+tx];
-    TILE_B[ty][tx] = B[(t*TILE_WIDTH+ty)*numBColumns + COL];
+    if((ROW < numCRows) && (t*TILE_WIDTH+tx < numAColumns)){
+      TILE_A[ty][tx] = A[ROW * numAColumns + t*TILE_WIDTH+tx];
+    }
+    else{
+      // printf("something outside A\n");
+      TILE_A[ty][tx] = 0;
+    }
+
+    if((t*TILE_WIDTH+ty < numBRows) && (COL < numCColumns)){
+      TILE_B[ty][tx] = B[(t*TILE_WIDTH+ty)*numBColumns + COL];
+    }
+    else{
+      // printf("something outside B, tiley:%d, tilex:%d, numCROWS: %d, numCColumns: %d\n", t*TILE_WIDTH+ty, COL, numCRows, numCColumns);
+      TILE_B[ty][tx] = 0;
+    }
     // if(ROW <=2 && COL <= 2){
     //     printf("Building...TILE_A[%d][%d] %f, TILE_B[%d][%d] %f\n", ty, tx, TILE_A[ty][tx], ty, tx, TILE_B[ty][tx]);
     // }
     __syncthreads();
-
-    for(int i=0; i<TILE_WIDTH; i++){
-        // if(ROW == 0 && COL == 0){
-        //     printf("tile i: %d\n", i);
-        //     printf("TILE_A[%d][%d] %f, TILE_B[%d][%d] %f, p_value %f\n", ty, i, TILE_A[ty][i], i, tx, TILE_B[i][tx],p_value);
-        // }
-        p_value += TILE_A[ty][i] * TILE_B[i][tx];
+    if(ROW < numCRows && COL < numCColumns){
+      for(int i=0; i<TILE_WIDTH; i++){
+          // if(ROW == 0 && COL == 0){
+          //     printf("tile i: %d\n", i);
+          //     printf("TILE_A[%d][%d] %f, TILE_B[%d][%d] %f, p_value %f\n", ty, i, TILE_A[ty][i], i, tx, TILE_B[i][tx],p_value);
+          // }
+          p_value += TILE_A[ty][i] * TILE_B[i][tx];
+      }
     }
     __syncthreads();
     // if(ROW == 0 && COL == 0){
     //     printf("Next Tile\n");
     // }
   }
-  C[ROW * numCColumns + COL] = p_value;
+  if(ROW < numCRows && COL < numCColumns){
+    // if(ROW == 0 && COL == 0){
+    //   printf("p_value: %f", p_value);
+    // }
+    C[ROW * numCColumns + COL] = p_value;
+  }
 }
 
 int main(int argc, char **argv) {

@@ -63,9 +63,9 @@ int main(int argc, char **argv) {
   //@@ Copy the GPU memory back to the CPU here
   cudaMemcpy(hostOutput, deviceOutput, total_bytes, cudaMemcpyDeviceToHost);
   wbTime_stop(Copy, "Copying output memory to the CPU");
-  for(int i=0; i<inputLength; i++){
-    cout << hostInput1[i] << "\t" << hostInput2[i] << "\t" << hostOutput[i]<<endl;
-  }
+  // for(int i=0; i<inputLength; i++){
+  //   cout << hostInput1[i] << "\t" << hostInput2[i] << "\t" << hostOutput[i]<<endl;
+  // }
   wbTime_start(GPU, "Freeing GPU Memory");
   //@@ Free the GPU memory here
   cudaFree(deviceInput1);
