@@ -1,7 +1,5 @@
 #include <wb.h>
 
-#include <iostream>
-using namespace std;
 
 #define wbCheck(stmt)                                                     \
 do {                                                                    \
@@ -134,7 +132,6 @@ int main(int argc, char *argv[]) {
   int NUM_BLOCKS_Z = (int)ceil(z_size / (float)TILE_WIDTH);
   int NUM_BLOCKS_Y = (int)ceil(y_size / (float)TILE_WIDTH);
   int NUM_BLOCKS_X = (int)ceil(x_size / (float)TILE_WIDTH);
-  cout << z_size << " " << y_size << " " << x_size << endl;
 
   dim3 dim_block(NUM_THREADS, NUM_THREADS, NUM_THREADS);
   dim3 dim_grid(NUM_BLOCKS_X, NUM_BLOCKS_Y, NUM_BLOCKS_Z);
