@@ -1,0 +1,136 @@
+http://s3.amazonaws.com/files.rai-project.com/userdata/build-64304f53086929700352cfb7.tar.gz
+
+
+
+Test batch size: 1000
+
+Loading fashion-mnist data...Done
+
+Loading model...Done
+
+Conv-GPU==
+
+Layer Time: 108.854 ms
+
+Op Time: 2.36435 ms
+
+Conv-GPU==
+
+Layer Time: 85.1421 ms
+
+Op Time: 15.1568 ms
+
+
+
+Test Accuracy: 0.886
+
+
+===========Batch Size: 100============
+
+Conv-GPU==
+
+Layer Time: 12.511 ms
+
+Op Time: 0.251676 ms
+
+Conv-GPU==
+
+Layer Time: 9.58664 ms
+
+Op Time: 1.54251 ms
+
+
+
+Test Accuracy: 0.86
+
+
+
+
+
+real    0m1.258s
+
+user    0m1.016s
+
+sys     0m0.171s
+
+===========Batch Size: 1000============
+
+Conv-GPU==
+
+Layer Time: 96.3304 ms
+
+Op Time: 2.36533 ms
+
+Conv-GPU==
+
+Layer Time: 83.2797 ms
+
+Op Time: 15.1663 ms
+
+
+
+Test Accuracy: 0.886
+
+
+
+
+
+real    0m10.141s
+
+user    0m9.737s
+
+sys     0m0.288s
+
+
+
+===========Batch Size: 10000============
+
+Conv-GPU==
+
+Layer Time: 993.362 ms
+
+Op Time: 21.1759 ms
+
+Conv-GPU==
+
+Layer Time: 817.697 ms
+
+Op Time: 136.437 ms
+
+
+
+Test Accuracy: 0.8714
+
+
+
+
+
+real    1m48.547s
+
+user    1m41.435s
+
+sys     0m1.882s
+
+
+
+Time(%)      Total Time   Instances         Average         Minimum         Maximum  Name                                                                            
+
+-------  --------------  ----------  --------------  --------------  --------------  --------------------------------------------------------------------------------
+
+  100.0       160461519           2      80230759.5        21455598       139005921  conv_forward_kernel                                                             
+
+
+
+  Time(%)      Total Time       Calls         Average         Minimum         Maximum  Name                                                                            
+
+-------  --------------  ----------  --------------  --------------  --------------  --------------------------------------------------------------------------------
+
+   80.1      1622664397          10     162266439.7           14826       651970317  cudaMemcpy                                                                      
+
+   11.0       222722294           8      27840286.7           76553       219245492  cudaMalloc            
+
+
+
+   A kernel is a program that executes on the GPU and performs computations in parallel, whereas CUDA API call is like a specification that allows the programmer to manage and control the execution of kernels, including memory allocation and kernel invocation.
+   
+                                                             

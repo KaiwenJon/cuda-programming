@@ -8,7 +8,7 @@ using namespace std;
 __global__ void vecAdd(float *in1, float *in2, float *out, int len) {
   //@@ Insert code to implement vector addition here
   int id = (blockIdx.x * blockDim.x) + threadIdx.x;
-  // printf("hello %d", id);
+  printf("hello %d", id);
   if(id < len){
     out[id] = in1[id] + in2[id];
     // printf("out %2f\n", out[id]);
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
   cudaMemcpy(deviceInput2, hostInput2, total_bytes, cudaMemcpyHostToDevice);
 
   wbTime_stop(GPU, "Copying input memory to the GPU.");
-
+  printf("Hello World!\n");
   //@@ Initialize the grid and block dimensions here
   int NUM_THREADS = 64;
   int NUM_BLOCKS = (int)ceil(inputLength / (float)NUM_THREADS);

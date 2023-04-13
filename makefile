@@ -27,7 +27,7 @@ tool_opt.o	: src/tool.cpp include/tool.h
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:lib/libwb/lib
 cuda	:cuda.o lib
 		$(NVCC) cuda.o -lwb -Llib/libwb/lib -o bin/cuda
-cuda.o	:src/mp4.cu lib
+cuda.o	:src/mp0.cu lib
 		$(NVCC) $(CUDAFLAGS) -c $< -Ilib/libwb -o $@
 
 lib: lib/libtm_usage.a

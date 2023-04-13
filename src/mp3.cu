@@ -23,7 +23,7 @@ __global__ void matrixMultiply(float *A, float *B, float *C, int numARows,
                                int numAColumns, int numBRows,
                                int numBColumns, int numCRows,
                                int numCColumns) {
-
+  printf("Hi Cuda World!");
   __shared__ float TILE_A[TILE_WIDTH][TILE_WIDTH];
   __shared__ float TILE_B[TILE_WIDTH][TILE_WIDTH];
   //@@ Insert code to implement matrix multiplication here
