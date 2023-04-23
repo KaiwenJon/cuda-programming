@@ -2,7 +2,7 @@
 #include <iostream>
 #include "gpu-new-forward.h"
 
-#define TILE_WIDTH 18// 18: 30 and 70
+#define TILE_WIDTH 18
 #define MASK_WIDTH 7
 #define RADIUS 3
 #define CHANNEL_NUM 4
@@ -57,8 +57,15 @@ __global__ void conv_forward_kernel(float *output, const float *input, const flo
     int tx = threadIdx.x;
     int ty = threadIdx.y;
     int tz = threadIdx.z;
-    for(int c=0; c<Channel; c++){
-        sharedTile[ty][tx][c] = in_4d(batchDataIdx, c, HdataIdx, WdataIdx);
+    if(WdataIdx < Width && HdataIdx < Height){
+        for(int c=0; c<Channel; c++){
+            sharedTile[ty][tx][c] = in_4d(batchDataIdx, c, HdataIdx, WdataIdx);
+        }
+    }
+    else{
+        for(int c=0; c<Channel; c++){
+            sharedTile[ty][tx][c] = 0.0f;
+        }
     }
 
     __syncthreads();
@@ -66,7 +73,7 @@ __global__ void conv_forward_kernel(float *output, const float *input, const flo
     // only tx=0~TILEWIDTH-1, ty=0~TILEWIDTH-1 , tz=0are computing.
     // each thread computes channel values and add them up
 
-    if(tx < TILE_WIDTH && ty < TILE_WIDTH && tz == 0 && HdataIdx < Height_out && WdataIdx < Width_out){
+    if(tx < TILE_WIDTH && ty < TILE_WIDTH && tz == 0){
         float val = 0.0f;
         for(int c=0; c<Channel; c++){
             for(int k1=0; k1<K; k1++){
@@ -75,7 +82,9 @@ __global__ void conv_forward_kernel(float *output, const float *input, const flo
                 }
             }
         }
-        out_4d(batchDataIdx, mapOutIdx, HdataIdx, WdataIdx) = val;
+        if(HdataIdx < Height_out && WdataIdx < Width_out) {
+            out_4d(batchDataIdx, mapOutIdx, HdataIdx, WdataIdx) = val;
+        }
     }
 
     #undef out_4d

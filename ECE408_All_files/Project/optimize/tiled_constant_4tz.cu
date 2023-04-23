@@ -2,7 +2,7 @@
 #include <iostream>
 #include "gpu-new-forward.h"
 
-#define TILE_WIDTH 18// 18: 30 and 70
+#define TILE_WIDTH 10
 #define MASK_WIDTH 7
 #define RADIUS 3
 #define CHANNEL_NUM 4
@@ -57,8 +57,11 @@ __global__ void conv_forward_kernel(float *output, const float *input, const flo
     int tx = threadIdx.x;
     int ty = threadIdx.y;
     int tz = threadIdx.z;
-    for(int c=0; c<Channel; c++){
-        sharedTile[ty][tx][c] = in_4d(batchDataIdx, c, HdataIdx, WdataIdx);
+    if(WdataIdx < Width && HdataIdx < Height){
+        sharedTile[ty][tx][tz] = in_4d(batchDataIdx, tz, HdataIdx, WdataIdx);
+    }
+    else{
+        sharedTile[ty][tx][tz] = 0.0;
     }
 
     __syncthreads();
@@ -66,7 +69,7 @@ __global__ void conv_forward_kernel(float *output, const float *input, const flo
     // only tx=0~TILEWIDTH-1, ty=0~TILEWIDTH-1 , tz=0are computing.
     // each thread computes channel values and add them up
 
-    if(tx < TILE_WIDTH && ty < TILE_WIDTH && tz == 0 && HdataIdx < Height_out && WdataIdx < Width_out){
+    if(tx < TILE_WIDTH && ty < TILE_WIDTH && tz == 0){
         float val = 0.0f;
         for(int c=0; c<Channel; c++){
             for(int k1=0; k1<K; k1++){
@@ -75,7 +78,9 @@ __global__ void conv_forward_kernel(float *output, const float *input, const flo
                 }
             }
         }
-        out_4d(batchDataIdx, mapOutIdx, HdataIdx, WdataIdx) = val;
+        if(HdataIdx < Height_out && WdataIdx < Width_out) {
+            out_4d(batchDataIdx, mapOutIdx, HdataIdx, WdataIdx) = val;
+        }
     }
 
     #undef out_4d
@@ -92,7 +97,7 @@ __host__ void GPUInterface::conv_forward_gpu(float *device_output, const float *
     int H_grid = (int)ceil(Height_out / (float)TILE_WIDTH);
     int W_grid = (int)ceil(Width_out / (float)TILE_WIDTH);
 
-    dim3 dim_block(INPUT_TILE_WIDTH, INPUT_TILE_WIDTH, 1);
+    dim3 dim_block(INPUT_TILE_WIDTH, INPUT_TILE_WIDTH, Channel);
     dim3 dim_grid(Map_out, H_grid * W_grid, Batch);
     conv_forward_kernel<<<dim_grid, dim_block>>>(device_output, device_input, device_mask, Batch, Map_out, Channel , Height, Width, K);
 }

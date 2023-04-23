@@ -66,7 +66,7 @@ __global__ void conv_forward_kernel(float *output, const float *input, const flo
     // only tx=0~TILEWIDTH-1, ty=0~TILEWIDTH-1 , tz=0are computing.
     // each thread computes channel values and add them up
 
-    if(tx < TILE_WIDTH && ty < TILE_WIDTH && tz == 0 && HdataIdx < Height_out && WdataIdx < Width_out){
+    if(tx < TILE_WIDTH && ty < TILE_WIDTH && tz == 0){
         float val = 0.0f;
         for(int c=0; c<Channel; c++){
             for(int k1=0; k1<K; k1++){
@@ -75,7 +75,9 @@ __global__ void conv_forward_kernel(float *output, const float *input, const flo
                 }
             }
         }
-        out_4d(batchDataIdx, mapOutIdx, HdataIdx, WdataIdx) = val;
+        if(HdataIdx < Height_out && WdataIdx < Width_out) {
+            out_4d(batchDataIdx, mapOutIdx, HdataIdx, WdataIdx) = val;
+        }
     }
 
     #undef out_4d

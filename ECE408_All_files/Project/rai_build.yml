@@ -18,6 +18,6 @@ commands:
       # You may modify the commands below. Uncomment/Comment lines based on the milestone
       # - /bin/bash -c "./m1 100"
       # - /bin/bash -c "nsys profile --stats=true ./m2"
-      - /bin/bash -c "nv-nsight-cu-cli --section '.*' -o analysis_file ./m2 10000"
-      #- /bin/bash -c "./m3"
+      # - /bin/bash -c "nv-nsight-cu-cli --section '.*' -o analysis_file ./m2 10000"
+      - /bin/bash -c " ./m3 10000"
       #- /bin/bash -c "./final"

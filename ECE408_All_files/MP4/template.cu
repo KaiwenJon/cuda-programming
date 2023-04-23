@@ -25,6 +25,7 @@ __constant__ float Mc[MASK_WIDTH][MASK_WIDTH][MASK_WIDTH];
 __global__ void conv3d(float *input, float *output, const int z_size,
                        const int y_size, const int x_size) {
   //@@ Insert kernel code here
+  // Strategy 2!!!
   __shared__ float sharedTile [INPUT_TILE_WIDTH][INPUT_TILE_WIDTH][INPUT_TILE_WIDTH];
   int tx = threadIdx.x;
   int ty = threadIdx.y;
